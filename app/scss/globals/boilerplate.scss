@@ -1,0 +1,29 @@
+@use '../util' as *;
+
+
+html {
+	font-size: 100%;
+	font-family: var(--font-body);
+	box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+	box-sizing: inherit;
+}
+
+body {
+	margin: 0;
+	padding: 0;
+	background:hsl(240, 3%, 7%);
+    color:hsl(0, 0%, 100%);
+	text-transform: uppercase;
+	font-weight: 600;
+	font-size:rem(36);
+
+	display: grid;
+	place-content: center;
+	height: 100vh;
+	width: 100%;
+}
