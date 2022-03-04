@@ -26,9 +26,11 @@ x Don't run update function if "letters" length = 4
 
 ### Submit guess
 
-x Pressing Enter will submit guess
-    - Compare each letter with the corresponding letter in solution word
-    - Update the state / color of the letter
+    x Pressing Enter will submit guess
+
+    x Compare each letter with the corresponding letter in solution word
+    x Update the state / color of the letter
+        - if all letters are "correct" / green, game is won
 
 Store solution words in JSON object / array
 
@@ -60,7 +62,9 @@ When typing a letter:
     - backspace with remove letter, border changes back to dark grey
 
     when submiting guess:
-        tiles will flip up and background color will change based on guess
+        - Tiles will flip up and background color will change based on guess
+        - Slight delay between eacch tile flipping
+        - blackground color changes when tile is flat, i.e can't see it from
 
 
 

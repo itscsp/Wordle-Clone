@@ -11,6 +11,8 @@
 
 const lettersPettern = /[A-Za-z]/;
 let pressedLetter;
+let  animationCompleted = false;
+let isTyping = true;
 
 let currentGuessCount = 1;
 let currentGuess = document.querySelector("#guess" + currentGuessCount);
@@ -22,6 +24,7 @@ let completeWordlist = undefined; // containing all words
 // update "letters"
 let letters;
 const updateLetters = (letter) => {
+
   letters = currentGuess.dataset.letters;
   let tileNumber = (currentGuess.dataset.letters = letters + letter).length;
   updateTail(tileNumber, letter);
@@ -35,8 +38,9 @@ document.addEventListener("keyup", (e) => {
   if (
     keypress.length === 1 &&
     isLetter &&
-    currentGuess.dataset.letters.length <= 4
+    currentGuess.dataset.letters.length <= 4 && isTyping
   ) {
+    console.log('is letter')
     updateLetters(keypress);
   } else if (e.key == "Backspace" && currentGuess.dataset.letters != "") {
     deleteFromLetters();
@@ -45,25 +49,37 @@ document.addEventListener("keyup", (e) => {
 
     if (wordvalid) {
       //if word is valid then loop run
-      for (let i = 0; i < 5; i++) {
-        revealTile(i, checkLetter(i));
+      for (let i = 0; i < 6; i++) {
+        setTimeout(() => {
+          revealTile(i, checkLetter(i));
+        }, i*500);
       }
+
+
+
     }
   }
 });
 
+
+const checkWin = () => {
+  return solutionWord == currentGuess.dataset.letters ? true : false;
+};
+
+
 // updating tail
 
 const updateTail = (tileNumber, letter) => {
-  let currentTail = document.querySelector("#guessTile" + tileNumber);
+  let currentTail = document.querySelector("#guess"+currentGuessCount+"Tile" + tileNumber);
   // currentTail.dataset.letter = letter
   currentTail.innerText = letter;
+  currentTail.classList.add('has-letter');
 };
 
 //Backspace -- delete last letters
 
 const deleteFromLetters = () => {
-  // remove lasr letter from data.letters
+  // remove last letter from data.letters
   let oldLetters = currentGuess.dataset.letters;
 
   let newLetters = oldLetters.slice(0, -1);
@@ -75,9 +91,11 @@ const deleteFromLetters = () => {
 // Backspace -- delete last tile markup
 const deleteFromTiles = (len) => {
   //remove markup from last tile
-  let currentTail = document.querySelector("#guessTile" + len);
+  let currentTail = document.querySelector("#guess"+currentGuessCount+"Tile" + len);
   // currentTail.dataset.letter = letter
   currentTail.innerText = "";
+
+  currentTail.classList.remove('has-letter'); // remove class if he press backspace
 };
 
 /* Check letter to solution
@@ -98,25 +116,79 @@ const checkLetter = (positions) => {
 };
 
 
-const revealTile = (i,status) => {
-  let currentElement = document.querySelector("#guessTile" + (i + 1));
 
-  switch(status){
-    case 'correct':
-      currentElement.classList.add("correct");
-      break;
-    case 'present':
-      currentElement.classList.add("present")
-      break;
-    case 'absent':
-      currentElement.classList.add("absent");
-      break;
-    default:
-      console.error("Some thing is wrong")
+const revealTile = (i,status) => {
+  if(i < 5){
+    flipTile(i,status);
   }
+
+  console.log(i)
+
+
+    if(i === 5){
+      if(checkWin()){
+        setTimeout(() => {
+          alert('Brillent! \n You Win The Match')
+        }, 1500)
+        jumpTiles();
+      }else{
+
+        currentGuessCount = currentGuessCount + 1;
+        currentGuess = document.querySelector("#guess" + currentGuessCount);
+        isTyping = true;
+
+        if(currentGuessCount > 6){
+          setTimeout(() => {
+            showSolution();
+          }, 500)
+        }
+      }
+    }
 
 
 }
+
+const showSolution = () => {
+    alert("You Last the game \n Solution Word : "+solutionWord)
+}
+
+
+
+
+// Flip in and out animation
+
+const flipTile = (i, status) => {
+  let currentElement = document.querySelector("#guess"+currentGuessCount+"Tile" + (i + 1));
+
+  currentElement.classList.add('flip-in')
+
+
+  setTimeout(() => {
+    currentElement.classList.add(status);
+    currentElement.classList.remove('flip-in');
+    currentElement.classList.add('flip-out');
+  }, 500)
+
+
+  setInterval(() => {
+    currentElement.classList.remove("flip-out")
+
+
+  }, 1000)
+
+
+}
+
+//jump animation if win
+const jumpTiles = () => {
+  for(let i=0; i < 5; i ++){
+    let currentTile = document.querySelector('#guess'+currentGuessCount+"Tile" + (i + 1))
+    setTimeout(() => {
+      currentTile.classList.add('jump');
+    }, i*250)
+  }
+}
+
 
 /*************
 Generate random Solution Word
@@ -151,3 +223,21 @@ function validWord() {
     return false;
   }
 }
+
+
+
+
+
+  // switch(status){
+  //   case 'correct':
+  //     currentElement.classList.add("correct");
+  //     break;
+  //   case 'present':
+  //     currentElement.classList.add("present")
+  //     break;
+  //   case 'absent':
+  //     currentElement.classList.add("absent");
+  //     break;
+  //   default:
+  //     console.error("Some thing is wrong")
+  // }
